@@ -45,10 +45,10 @@ namespace ToDoLibrary.DataAccess
             return results.FirstOrDefault();
         }
 
-        public Task Update(int assignedTo, int todoId, string task)
+        public Task UpdateTask(int assignedTo, int todoId, string task)
         {
             return _sql.SaveData<dynamic>(
-                "dbo.spTodos_Update",
+                "dbo.spTodos_UpdateTask",
                 new { AssignedTo = assignedTo, TodoId = todoId, Task = task },
                 _connectionStringName);
         }

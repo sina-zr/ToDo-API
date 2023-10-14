@@ -9,6 +9,6 @@ namespace ToDoLibrary.DataAccess
         Task Delete(int assignedTo, int todoId);
         Task<List<TodoModel>> GetAllAssigned(int assignedTo);
         Task<TodoModel?> GetOneAssigned(int assignedTo, int todoId);
-        Task Update(int assignedTo, int todoId, string task);
+        Task UpdateTask(int assignedTo, int todoId, string task);
     }
 }

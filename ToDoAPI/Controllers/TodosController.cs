@@ -58,7 +58,7 @@ public class TodosController : ControllerBase
     [HttpPut("{todoId}")]
     public async Task<IActionResult> Put(int todoId, [FromBody] string task)
     {
-        await _data.Update(GetUserId(), todoId, task);
+        await _data.UpdateTask(GetUserId(), todoId, task);
 
         return Ok();
     }
