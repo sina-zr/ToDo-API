@@ -26,6 +26,11 @@ public class TodosController : ControllerBase
     }
 
     // GET: api/Todos
+    /// <summary>
+    /// Gets all the Tasks Assigned to a User from Database
+    /// where userId is automatically taken from Token
+    /// </summary>
+    /// <returns> List of TodoModel </returns>
     [HttpGet]
     public async Task<ActionResult<List<TodoModel>>> Get()
     {
@@ -47,6 +52,12 @@ public class TodosController : ControllerBase
     }
 
     // GET api/Todos/5
+    /// <summary>
+    /// Gets only one Task of a user from Database
+    /// And userId is taken from Token
+    /// </summary>
+    /// <param name="todoId">The Id of the Task you want to get</param>
+    /// <returns>One TodoModel</returns>
     [HttpGet("{todoId}")]
     public async Task<ActionResult<TodoModel>> Get(int todoId)
     {
@@ -66,6 +77,12 @@ public class TodosController : ControllerBase
     }
 
     // POST api/Todos
+    /// <summary>
+    /// Creates a Task in the Database
+    /// And userId is taken from Token
+    /// </summary>
+    /// <param name="task">description of the task you want to add as string</param>
+    /// <returns>Returns the Task you created as TodoModel obj</returns>
     [HttpPost]
     public async Task<ActionResult<TodoModel>> Post([FromBody] string task)
     {
@@ -85,6 +102,13 @@ public class TodosController : ControllerBase
     }
 
     // PUT api/Todos/5
+    /// <summary>
+    /// Updates one Task of User you have in Database
+    /// Takes userId from Token
+    /// </summary>
+    /// <param name="todoId">Id of the task you wanna Update</param>
+    /// <param name="task">description of the Task as string</param>
+    /// <returns></returns>
     [HttpPut("{todoId}")]
     public async Task<IActionResult> Put(int todoId, [FromBody] string task)
     {
@@ -104,6 +128,12 @@ public class TodosController : ControllerBase
     }
 
     // PUT api/Todos/5/Complete
+    /// <summary>
+    /// Mark a Task of user as Complete in Database
+    /// Takes userId from Token
+    /// </summary>
+    /// <param name="todoId">Id of the task</param>
+    /// <returns></returns>
     [HttpPut("{todoId}/Complete")]
     public async Task<IActionResult> Complete(int todoId)
     {
@@ -123,6 +153,12 @@ public class TodosController : ControllerBase
     }
 
     // DELETE api/Todos/5
+    /// <summary>
+    /// Deletes a Task of User from Database
+    /// userId is taken from Database
+    /// </summary>
+    /// <param name="todoId">Id of the Task you wanna Delete</param>
+    /// <returns></returns>
     [HttpDelete("{todoId}")]
     public async Task<IActionResult> Delete(int todoId)
     {

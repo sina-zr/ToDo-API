@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 using ToDoLibrary.DataAccess;
 
@@ -11,7 +12,11 @@ namespace ToDoAPI.StartUpConfig
         {
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opts =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                opts.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+            });
         }
 
         public static void AddDataAccessServices(this WebApplicationBuilder builder)
