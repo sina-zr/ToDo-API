@@ -1,5 +1,6 @@
 ﻿using ToDoLibrary.DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ToDoMinimalAPI.Endpoints;
@@ -18,29 +19,35 @@ public static class TodosEndpoints
 
         app.MapDelete("/api/Todos/{todoId}", DeleteTodo);
     }
-    private async static Task<IResult> GetAllTodos(ITodoData data)
+    private async static Task<IResult> GetAllTodos(ITodoData data, HttpContext context)
     {
-        var output = await data.GetAllAssigned(1);
+        var output = await data.GetAllAssigned(GetUserId(context));
         return Results.Ok(output);
     }
-    private async static Task<IResult> CreateTodo(ITodoData data, [FromBody] string task)
+    private async static Task<IResult> CreateTodo(ITodoData data, HttpContext context, [FromBody] string task)
     {
-        var output = await data.Create(1, task);
+        var output = await data.Create(GetUserId(context), task);
         return Results.Ok(output);
     }
-    private async static Task<IResult> UpdateTodo(ITodoData data, int todoId, [FromBody] string task)
+    private async static Task<IResult> UpdateTodo(ITodoData data, int todoId, HttpContext context, [FromBody] string task)
     {
-        await data.UpdateTask(1, todoId, task);
+        await data.UpdateTask(GetUserId(context), todoId, task);
         return Results.Ok();
     }
-    private async static Task<IResult> CompleteTodo(ITodoData data, int todoId)
+    private async static Task<IResult> CompleteTodo(ITodoData data, HttpContext context, int todoId)
     {
-        await data.CompleteTodo(1, todoId);
+        await data.CompleteTodo(GetUserId(context), todoId);
         return Results.Ok();
     }
-    private async static Task<IResult> DeleteTodo(ITodoData data, int todoId)
+    private async static Task<IResult> DeleteTodo(ITodoData data, HttpContext context, int todoId)
     {
-        await data.Delete(1, todoId);
+        await data.Delete(GetUserId(context), todoId);
         return Results.Ok();
+    }
+
+    private static int GetUserId(HttpContext context)
+    {
+        var userIdText = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        return int.TryParse(userIdText, out int userId) ? userId : 0; // Return 0 or handle invalid case as needed
     }
 }
