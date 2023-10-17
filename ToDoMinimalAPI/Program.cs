@@ -1,13 +1,15 @@
+using ToDoLibrary.DataAccess;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddSingleton<ITodoData, TodoData>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,28 +18,34 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/api/Todos", async (ITodoData data) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var output = await data.GetAllAssigned(1);
+    return Results.Ok(output);
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/api/Todos", async (ITodoData data, [FromBody] string task) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var output = await data.Create(1, task);
+    return Results.Ok(output);
+});
+
+app.MapPut("/api/Todos/{todoId}", async (ITodoData data, int todoId, [FromBody] string task) =>
+{
+    await data.UpdateTask(1, todoId, task);
+    return Results.Ok();
+});
+
+app.MapPut("/api/Todos/{todoId}/Complete", async (ITodoData data, int todoId) =>
+{
+    await data.CompleteTodo(1, todoId);
+    return Results.Ok();
+});
+
+app.MapDelete("/api/Todos/{todoId}", async (ITodoData data, int todoId) =>
+{
+    await data.Delete(1, todoId);
+    return Results.Ok();
+});
 
 app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
